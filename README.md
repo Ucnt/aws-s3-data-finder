@@ -5,7 +5,7 @@ Find suspicious files (e.g. data backups, PII, credentials) across a large set o
 I had a repo (aws-s3-bruteforce) that was ugly, Python2 code and would only identify buckets whose files you could list.  Instead, I wanted to look through those lists, at scale, and speficially look for potential data exposure.
 
 # Overview
-In module/run_bucket.py, each buckets' keys will be searched for a variety of items, e.g.:
+In module/run_bucket.py, each buckets' keys will be searched for a variety of items, i.e.:
 - Potential database files (i.e. ".sql", ".mysql", ".mongodb", ".mariadb", ".mdb", ".dump") >= 50MB
 - Potential backups (i.e. ".gz", ".tar", ".zip", ".7z") with "backup", "bak", or "archive" >= 50MB 
 - Potential user data (i.e. "user", "member", "client") >= 50MB
