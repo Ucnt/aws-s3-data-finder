@@ -19,6 +19,7 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 # Requirements (in requirements.txt)
 - termcolor (to do CLI colors)
 - awscli (needs to be configured with access and secret keys)
+- Install via sudo -H pip3 install -r requirements.txt
 
 # Prefixes and postfixes
 - For a bucket called "mycompany" a prefix or postfix would be something like "-admin" or ".admin"
