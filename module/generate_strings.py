@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from module.prefixes_postfixes import *
+from lib.arg_parser import *
 entities = [
                 " Inc", " incorporated", 
                 " Co", "company", 
@@ -26,8 +27,10 @@ def add_prefix_postfix(bucket_name):
             if (prefix_postfix_separator in bucket and prefix_postfix_separator != "") or \
                 not any(True for item in prefix_postfix_separators if item in bucket and item not in [prefix_postfix_separator, ""]):
                     for prefix_postfix in prefixes_postfixes:
-                        names_with_additions.append("{prefix_postfix}{prefix_postfix_separator}{bucket}".format(prefix_postfix=prefix_postfix, prefix_postfix_separator=prefix_postfix_separator, bucket=bucket))
-                        names_with_additions.append("{bucket}{prefix_postfix_separator}{prefix_postfix}".format(bucket=bucket, prefix_postfix_separator=prefix_postfix_separator, prefix_postfix=prefix_postfix))
+                        if args.prefix_postfix.lower() in ['both', 'prefix']:
+                            names_with_additions.append("{prefix_postfix}{prefix_postfix_separator}{bucket}".format(prefix_postfix=prefix_postfix, prefix_postfix_separator=prefix_postfix_separator, bucket=bucket))
+                        if args.prefix_postfix.lower() in ['both', 'postfix']:
+                            names_with_additions.append("{bucket}{prefix_postfix_separator}{prefix_postfix}".format(bucket=bucket, prefix_postfix_separator=prefix_postfix_separator, prefix_postfix=prefix_postfix))
 
     return list(set(names_with_additions))
 

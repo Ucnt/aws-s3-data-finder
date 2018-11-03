@@ -26,7 +26,7 @@ parser.add_argument('-nc', '--num_chars', type=int, help='Lenght of bucket name"
 # parser.add_argument('-nr', '--num_range_characters', default="", help='Range lenght of bucket names, e.g. 3-5"')
 parser.add_argument('-ac', '--random_chars', action='store_true', help='Run random chars"')
 parser.add_argument('-rc', '--all_chars', action='store_true', help='Run all chars')
-parser.add_argument('-pp', '--prefix_postfix', action='store_true', help='Run with prefixes and postfixes')
+parser.add_argument('-pp', '--prefix_postfix', default='', help='Run with prefixes and/or postfixes - options: prefix, postfix, both')
 parser.add_argument('-sa', '--start_after', default='', help='For all_chars, start after this string')
 
 
