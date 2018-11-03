@@ -53,7 +53,7 @@ def run_bucket(bucket_name):
                     #Potential credentials
                     elif any([True for s in ["password", "creds", "credential"] if s in key_lower]):
                         if any([True for extension in ["doc", "xls", "csv", "txt", "json"] if extension in key_lower]):
-                        logger.log.critical("\n%s"%  (msg))
+                            logger.log.critical("\n%s"%  (msg))
                             add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
                     #Bash or AWS files
                     elif any([True for s in [".bash", ".aws"] if s in key_lower]):
