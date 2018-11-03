@@ -12,7 +12,7 @@ In module/run_bucket.py, each buckets' keys will be searched for a variety of it
 - "password", "creds", "credential" in a "doc", "xls", "csv", "txt", or "json" file
 - ".bash", ".aws"
 
-# Requirements
+# Requirements (in requirements.txt)
 - termcolor (to do CLI colors)
 - awscli (needs to be configured with access and secret keys)
 
