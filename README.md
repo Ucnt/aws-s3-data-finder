@@ -13,9 +13,8 @@ In module/run_bucket.py, each buckets' keys will be searched for a variety of it
 - ".bash", ".aws"
 <br>
 If one of the above file types are found, they will be written to list/suspicious-files.txt in the format (size -> file_link)
-<br>
+<br><br>
 Buckets found will be written to list/buckets-found (both public and authenticated)
-<br>
 
 # Requirements (in requirements.txt)
 - termcolor (to do CLI colors)
