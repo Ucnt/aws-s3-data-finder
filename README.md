@@ -34,6 +34,7 @@ python3 find_data.py --name_list list/buckets-to-check.txt [-pp|--prefix_postfix
 ## Bruteforce character set
 
 python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --all_chars [-pp|--prefix_postfix] [-sa|--start_after] 
+<br>
 python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --random_chars [-pp|--prefix_postfix]
 
 ## Test mode to see what bucket names would be tested (without running it)
