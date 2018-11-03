@@ -36,7 +36,7 @@ def run_bucket(bucket_name):
             pass
         else:
             add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add=bucket_name)
-            output_json = ast.literal_eval(output.strip())
+            output_json = ast.literal_eval(output.strip().replace('""', '"'))
             #Write the bucket content to file (in case you want to look back later)
             if output_json['Contents']:
                 add_string_to_file(file_name="%s/%s.txt" % (bucket_dir, bucket_name), string_to_add=output_json['Contents'])
