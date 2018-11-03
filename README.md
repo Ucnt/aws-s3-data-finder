@@ -2,7 +2,7 @@
 Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a text file (in buckets/).
 
 # Background
-I had a repo (aws-s3-bruteforce) that was ugly code and would only identify buckets whose files you could list.  Instead, I wanted to look through those lists, at scale, and speficially look for potential data exposure.
+I had a repo (aws-s3-bruteforce) that was ugly, Python2 code and would only identify buckets whose files you could list.  Instead, I wanted to look through those lists, at scale, and speficially look for potential data exposure.
 
 # Overview
 In module/run_bucket.py, each buckets' keys will be searched for a variety of items, e.g.:
