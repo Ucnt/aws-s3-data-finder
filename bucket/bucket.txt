@@ -1,0 +1,1 @@
+[{'LastModified': 'datetime', 'ETag': 'hashvalue', 'StorageClass': 'STANDARD', 'Key': 'keyname', 'Size': 1234}]
