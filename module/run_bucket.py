@@ -15,7 +15,7 @@ def run_bucket(bucket_name):
     try:
         #If you're just testing, print the bucket name and return
         if args.test:
-            logger.log.critical("%s" % (bucket_name))
+            logger.log.critical("\n%s" % (bucket_name))
             return
 
         command = '''aws s3api list-objects --bucket %s --max-items %s''' % (bucket_name, args.num_keys)
@@ -48,19 +48,19 @@ def run_bucket(bucket_name):
                     msg = "{file_size_mb} -> {bucket_name}.s3.amazonaws.com/{key}".format(file_size_mb=file_size_mb, bucket_name=bucket_name, key=item['Key'])
                     #Suspicious database/backup file
                     if suspicious_db_backup(key_lower) and file_size_mb >= min_db_mb:
-                        logger.log.critical(msg)
+                        logger.log.critical("\n%s"%  (msg))
                         add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
                     #Potential credentials
                     elif any([True for s in ["password", "creds", "credential"] if s in key_lower]):
                         if any([True for extension in ["doc", "xls", "csv", "txt", "json"] if extension in key_lower]):
-                            logger.log.critical(msg)
+                        logger.log.critical("\n%s"%  (msg))
                             add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
                     #Bash or AWS files
                     elif any([True for s in [".bash", ".aws"] if s in key_lower]):
-                        logger.log.critical(msg)
+                        logger.log.critical("\n%s"%  (msg))
                         add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
                 except:
-                    logger.log.warning("Error on %s: %s" % (bucket_name, get_exception().replace("\n","")))
+                    logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
         #Mark as done... 
         checked_buckets.append(bucket_name)
@@ -68,7 +68,7 @@ def run_bucket(bucket_name):
 
     except:
         add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add=bucket_name)
-        logger.log.warning("Error on %s: %s" % (bucket_name, get_exception().replace("\n","")))
+        logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
 
 def suspicious_db_backup(key):

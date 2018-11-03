@@ -14,7 +14,7 @@ class ProgressBar(object):
         """Initialized the ProgressBar object"""
         #Output format and variables
         self.symbol = "#"               #Needs to be 1 char
-        self.fmt = '''%(percent)3d%% %(progress_bar)s %(cur_item)s of %(num_items)s   %(items_per_time)s%(per_time_label)s    Skipped: %(num_skipped)s   Run Time: %(run_time)s'''
+        self.fmt = '''%(percent)3d%% %(progress_bar)s %(cur_item)s of %(num_items)s   %(items_per_time)s%(per_time_label)s   Run Time: %(run_time)s   ETA: %(eta)s    %(item)s%(end_spaces)s'''
         assert len(self.symbol) == 1    #If higher, progress bar won't populate properly
         try:
             self.progressbar_width = math.floor(int(os.popen('stty size', 'r').read().split()[1])*.35)
@@ -26,10 +26,9 @@ class ProgressBar(object):
         self.finished = False
         self.num_items = num_items
         self.cur_item = 0
-        self.num_skipped = 0
 
 
-    def __call__(self, num_completed=1):
+    def __call__(self, num_completed=1, item=""):
         """Actions to run when progress is run"""
 
         #Update calculations/values
@@ -65,17 +64,20 @@ class ProgressBar(object):
                 items_per_time = int(self.cur_item / run_time * 60 * 60)
                 per_time_label = "/hr"
 
+        if item:
+            item = "Current Item: %s" % (item)
+
         #Args to populate into fmt
         args = {
             'percent': (percent * 100),
             'progress_bar': '''[{progress_bar}]'''.format(progress_bar=progress_bar),
             'cur_item': "{:,}".format(self.cur_item),
             'num_items': "{:,}".format(self.num_items),
-            'num_skipped': "{:,}".format(self.num_skipped),
             'items_per_time': items_per_time,
             'per_time_label': per_time_label,
-            'run_time': self.get_eta(run_time, get_ms=True),
-            # 'eta': self.get_eta(time_left),
+            'run_time': self.get_eta(run_time, get_ms=False),
+            'eta': self.get_eta(time_left),
+            'item' : item,
             'end_spaces' : "",
         }
 

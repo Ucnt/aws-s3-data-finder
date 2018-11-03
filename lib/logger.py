@@ -13,6 +13,7 @@ class MyFormatter(logging.Formatter):
         You could theoretically change * to anything, e.g. VULN, ERROR, INFO...even just colored CRITICAL, ERROR, WARNING
     """
     def format(self, record):
+        #Make the custom level marker
         record.levelname = record.levelname.replace(
                                                     "CRITICAL",colored("*","red", attrs=['bold'])
                                                    ).replace(
@@ -20,22 +21,18 @@ class MyFormatter(logging.Formatter):
                                                    ).replace(
                                                     "WARNING",colored("*","green", attrs=['bold'])
                                                    )
+        
+        #Make the newline start before the level if there is one in the message
+        if record.message.startswith("\n"):
+            record.level_label = "\n[%s]" % (record.levelname)
+        else:
+            record.level_label = "[%s]" % (record.levelname)
+
+        #Be sure message is stripped either way
+        record.message_text = record.message.strip()
+
+        #Return the newly formatted record
         return logging.Formatter.format(self, record)
-
-formatter_stdout = MyFormatter('''{level} {message}'''.format(
-    level='[%(levelname)s]', 
-    message='%(message)s'
-))
-
-#Short format for printing to screen with newline option (e.g. if doing a progressbar)
-# formatter_stdout = MyFormatter('''{new_line}{level} {message}'''.format(
-#     new_line='%(new_line)s',
-#     level='[%(levelname)s]', 
-#     message='%(message)s'
-# ))
-
-#Verbose format for logging to file
-formatter_file = logging.Formatter('''{asctime} | {level} | {message}'''.format(asctime='%(asctime)s',level='%(levelname)s',message='%(message)s'))
 
 
 class Logger():
@@ -45,17 +42,24 @@ class Logger():
         #Add rotating file handler
         fh = RotatingFileHandler("%s/log.txt" % (log_dir), maxBytes=200000, backupCount=5)
         fh.setLevel(logging.WARNING)
-        fh.setFormatter(formatter_file)
+        formatter_log = logging.Formatter('''{asctime} | {level} | {message}'''.format(asctime='%(asctime)s',level='%(levelname)s',message='%(message)s'))
+        fh.setFormatter(formatter_log)
         self.log.addHandler(fh)
 
         #Add command line handliner
         ch = logging.StreamHandler()
+        #Set the level
         if print_very_verbose:
             ch.setLevel(logging.WARNING)
         elif print_verbose:
             ch.setLevel(logging.ERROR)
         else:
             ch.setLevel(logging.CRITICAL)
+        #Custom format for printing to the screen
+        formatter_stdout = MyFormatter('''{level_label} {message_text}'''.format(
+            level_label='%(level_label)s', 
+            message_text='%(message_text)s'.strip()
+        ))
         ch.setFormatter(formatter_stdout)
         self.log.addHandler(ch)
 
