@@ -1,0 +1,1 @@
+[{'Key': 'Mavs-Stars.flv', 'LastModified': '2009-06-08T15:41:48.000Z', 'ETag': 'c4093d894ba5c2045a7749607547e89e', 'Size': 12942329, 'StorageClass': 'STANDARD'}, {'Key': 'montage.flv', 'LastModified': '2009-06-10T14:36:27.000Z', 'ETag': 'fc87f1864c694274dc26891bcc5f4516', 'Size': 21112621, 'StorageClass': 'STANDARD'}]
