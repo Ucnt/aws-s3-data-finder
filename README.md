@@ -28,11 +28,11 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 
 # Example commands
 
-## Bruteforce single name
+## Bruteforce single name (bucket name or company name)
 
 python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix]
 
-## Bruteforce a list of names
+## Bruteforce a list of names (bucket name or company name)
 
 python3 find_data.py --name_list list/buckets-to-check.txt [-pp|--prefix_postfix]
 
@@ -51,6 +51,7 @@ python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix] --test
 - Prior repo allowed a range of chars (e.g. 3-4 chars) to be run.  I will add this soon.
 - By default, the first 200k keys will be looked at.  This can be modified via "--num_keys"
 - Some buckets will error out.  list/bucket-errors.txt will list these buckets.  Often it will be JSON parsing issues.
+- If doing company names, use the --prefix_postrix option to format it, e.g. "my company" to "mycompany"
 
 # AWS Account and Access/Secret Key Instructions
 - Setup an AWS Account (https://portal.aws.amazon.com/billing/signup)
