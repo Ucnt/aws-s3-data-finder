@@ -60,16 +60,21 @@ def search_strings():
                             continue    
                         active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
                         progress.num_items += 1
+
+                        #Check running processes and remove them when done
+                        for active_process in active_processes:
+                            if active_process.ready():
+                                active_processes.remove(active_process)
+                                progress(num_completed=1)
+                        progress(num_completed=0)
             except StopIteration:
                 next_bucket = ""
-
 
         #Check running processes and remove them when done
         for active_process in active_processes:
             if active_process.ready():
                 active_processes.remove(active_process)
                 progress(num_completed=1)
-
 
         if not active_processes and not next_bucket:
             break
