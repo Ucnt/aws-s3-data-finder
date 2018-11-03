@@ -23,7 +23,7 @@ Buckets found will be written to list/buckets-found (both public and authenticat
 # Prefixes and postfixes
 - For a bucket called "mycompany" a prefix or postfix would be something like "-admin" or ".admin"
 - These are in module/prefixes_postfixes.py.  I have commented out a large number that were not useful to me.
-- If a ".", "-", or "_" is already in the name, only that char will be used 
+- If a ".", "-", or "_" is already in the name, only that char will be used (faster and best results)
 
 # Example commands
 
