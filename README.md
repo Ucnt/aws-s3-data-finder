@@ -25,26 +25,27 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 - For a bucket called "mycompany" a prefix or postfix would be something like "-admin" or ".admin"
 - These are in module/prefixes_postfixes.py.  I have commented out a large number that were not useful to me.
 - If a ".", "-", or "_" is already in the name, only that char will be used (faster and best results)
+- The --prefix_postfix option can be: both, prefix, or postfix
 
 # Example commands
 
 ## Bruteforce single name (bucket name or company name)
 
-python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix]
+python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix OPTION]
 
 ## Bruteforce a list of names (bucket name or company name)
 
-python3 find_data.py --name_list list/buckets-to-check.txt [-pp|--prefix_postfix]
+python3 find_data.py --name_list list/buckets-to-check.txt [-pp|--prefix_postfix OPTION]
 
 ## Bruteforce character set
 
-python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --all_chars [-pp|--prefix_postfix] [-sa|--start_after] 
+python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --all_chars [-pp|--prefix_postfix OPTION] [-sa|--start_after] 
 <br>
-python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --random_chars [-pp|--prefix_postfix]
+python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --random_chars [-pp|--prefix_postfix OPTION]
 
 ## Test mode to see what bucket names would be tested (without running it)
 
-python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix] --test
+python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix OPTION] --test
 
 # Notes
 - By default, bucket names already run will be skipped.  They can be re-run via "--rerun"
