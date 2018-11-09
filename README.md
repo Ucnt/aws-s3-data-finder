@@ -33,6 +33,7 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 # Example commands
 
 ## Run a single bucket UNAUTHENTICATED
+
 python3 find_data.py -n bucketname -u
 
 ## Bruteforce single name (bucket name or company name)
@@ -54,6 +55,7 @@ python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --random_chars [-p
 python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix OPTION] --test
 
 ## Run Unauth requests via a different endpoint (defaulted to "s3.amazonaws.com")
+
 python3 find_data.py -n bucketname -u -e "s3.us-east-2.amazonaws.com"
 
 
