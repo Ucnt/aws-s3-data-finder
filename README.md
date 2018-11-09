@@ -1,5 +1,5 @@
 # Purpose
-Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a text file (in buckets/) via awscli OR unauthenticated via HTTP requests.
+Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a .json or .xml file (in buckets/) via awscli OR unauthenticated via HTTP requests.
 
 # Reason
 Companies and individuals, far too often, have public S3 buckets with client data or PII in them.  Details of my adventures are here: https://www.mattsvensson.com/nerdings/2017/7/27/amazon-s3-bucket-searching-and-scraping
@@ -21,7 +21,7 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 
 # Requirements (in requirements.txt)
 - termcolor (to do CLI colors)
-- awscli (needs to be configured with access and secret keys)
+- awscli (for auth scans, needs to be configured with access and secret keys)
 - Install via sudo -H pip3 install -r requirements.txt
 
 # Prefixes and postfixes
