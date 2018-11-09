@@ -1,5 +1,5 @@
 # Purpose
-Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a text file (in buckets/).
+Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a text file (in buckets/) via AWCLI OR unauthenticated via HTTP requests.
 
 # Reason
 Companies and individuals, far too often, have public S3 buckets with client data or PII in them.  Details of my adventures are here: https://www.mattsvensson.com/nerdings/2017/7/27/amazon-s3-bucket-searching-and-scraping
@@ -31,6 +31,9 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 - The --prefix_postfix option can be: both, prefix, or postfix
 
 # Example commands
+
+## Run a single bucket UNAUTHENTICATED
+python3 find_data.py -n bucketname -u
 
 ## Bruteforce single name (bucket name or company name)
 
