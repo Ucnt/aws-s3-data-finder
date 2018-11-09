@@ -7,7 +7,13 @@ import argparse
 parser = argparse.ArgumentParser(description='''''')
 
 ###############################################
-## String options
+## Unauth Scan
+###############################################
+parser.add_argument('-u', '--unauthenticated', action='store_true', help='Run the search unauthenticated, via web request')
+parser.add_argument('-e', '--endpoint', default="s3.amazonaws.com", help='Endpoint to use if doing an unauth scan.  Auth scan will use region in awscli')
+
+###############################################
+## Number of keys to pull
 ###############################################
 parser.add_argument('-nk', '--num_keys', default=200000, help='Number of keys to get per bucket')
 
@@ -28,7 +34,6 @@ parser.add_argument('-ac', '--random_chars', action='store_true', help='Run rand
 parser.add_argument('-rc', '--all_chars', action='store_true', help='Run all chars')
 parser.add_argument('-pp', '--prefix_postfix', default='', help='Run with prefixes and/or postfixes - options: prefix, postfix, both')
 parser.add_argument('-sa', '--start_after', default='', help='For all_chars, start after this string')
-
 
 ###############################################
 ## Optional
