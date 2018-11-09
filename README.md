@@ -1,5 +1,5 @@
 # Purpose
-Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a text file (in buckets/) via AWCLI OR unauthenticated via HTTP requests.
+Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a text file (in buckets/) via awscli OR unauthenticated via HTTP requests.
 
 # Reason
 Companies and individuals, far too often, have public S3 buckets with client data or PII in them.  Details of my adventures are here: https://www.mattsvensson.com/nerdings/2017/7/27/amazon-s3-bucket-searching-and-scraping
@@ -52,6 +52,10 @@ python3 find_data -c abcdefghijklmnopqrstuvwxyz --num_chars 3 --random_chars [-p
 ## Test mode to see what bucket names would be tested (without running it)
 
 python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix OPTION] --test
+
+## Run Unauth requests via a different endpoint (defaulted to "s3.amazonaws.com")
+python3 find_data.py -n bucketname -u -e "s3.us-east-2.amazonaws.com"
+
 
 # Notes
 - By default, bucket names already run will be skipped.  They can be re-run via "--rerun"
