@@ -4,6 +4,7 @@ import random, time
 import ast
 from lib.logger import *
 from lib.progressbar import *
+from lib.file_actions import *
 from lib.get_cmd_output import *
 from module.run_bucket import run_bucket
 from module.search_strings import search_strings
@@ -43,6 +44,7 @@ if __name__ == "__main__":
 
     #Run a list of names
     elif args.name_list:
+        global buckets_checked
         buckets_to_check = list_from_lines(args.name_list)
 
         #Add given buckets to asynch pool
@@ -52,14 +54,14 @@ if __name__ == "__main__":
                 names_with_prefix_postfix = add_prefix_postfix(bucket_to_check)
                 for name_with_prefix_postfix in names_with_prefix_postfix:
                     #Skip here so you don't have to hit the multiprocess delay
-                    if name_with_prefix_postfix in checked_buckets and not args.rerun:
+                    if name_with_prefix_postfix in buckets_checked and not args.rerun:
                         progress.num_skipped += 1
                         continue
                     progress.num_items += 1
                     active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
             else:
                 #Skip here so you don't have to hit the multiprocess delay
-                if name_with_prefix_postfix in checked_buckets and not args.rerun:
+                if name_with_prefix_postfix in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
                     continue                
                 active_processes.append(pool.apply_async(run_bucket, (bucket_to_check, )))
@@ -68,6 +70,8 @@ if __name__ == "__main__":
             #Keep track of progress...
             for active_process in active_processes:
                 if active_process.ready():
+                    buckets_checked.append("%s.%s" % (active_process._value, args.endpoint))
+                    add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                      
                     active_processes.remove(active_process)
                     progress(num_completed=1, item=active_process._value)
 

@@ -11,4 +11,4 @@ bucket_dir = "%s/bucket" % (main_dir)
 
 
 #Get list of buckets completed and create a generator to randomly look at new ones
-checked_buckets = list_from_lines("%s/buckets-checked.txt" % (list_dir))
+buckets_checked = list_from_lines("%s/buckets-checked.txt" % (list_dir))

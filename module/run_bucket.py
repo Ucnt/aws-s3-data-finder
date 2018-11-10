@@ -29,10 +29,11 @@ def run_bucket_unauth(bucket_name):
     Purpose: Run the bucket unauthenticated, i.e. via an HTTP request
     Reason: Might not want to leave any trace...e.g. with AWS keys
     '''
+    global buckets_checked
     try:
         url = "https://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
         r = requests.get(url, verify=False)
-        add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add=bucket_name)
+        add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
         #See if the bucket doesn't exist
         for no_bucket_response in ["NoSuchBucket", "InvalidBucketName"]:
@@ -41,16 +42,16 @@ def run_bucket_unauth(bucket_name):
 
         #See if bucket is disabled
         if "<Code>AllAccessDisabled</Code>" in r.text:
-            add_string_to_file("%s/buckets-allaccessdisabled.txt" % (list_dir), string_to_add=bucket_name)
+            add_string_to_file("%s/buckets-allaccessdisabled.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             return bucket_name
 
         #See if access is denied
         if "<Code>AccessDenied</Code>" in r.text:
-            add_string_to_file("%s/buckets-accessdenied.txt" % (list_dir), string_to_add=bucket_name)
+            add_string_to_file("%s/buckets-accessdenied.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             return bucket_name
 
         #Bucket exists...add it
-        add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add=bucket_name)
+        add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
         #If it has no keys, stop
         if not "<Key>" in r.text:
@@ -93,15 +94,17 @@ def run_bucket_unauth(bucket_name):
 
             #Close XML and write it
             key_dump += '''</ListBucketResult>'''
-            add_string_to_file(file_name="%s/%s.xml" % (bucket_dir, bucket_name), string_to_add=key_dump)
+            add_string_to_file(file_name="%s/%s.%s.xml" % (bucket_dir, bucket_name, args.endpoint), string_to_add=key_dump)
+            buckets_checked.append("%s.%s" % (bucket_name, args.endpoint))
+            add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             return bucket_name
     except:
-        add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add=bucket_name)
+        add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
 
 def run_bucket_auth(bucket_name):
-    global checked_buckets
+    global buckets_checked
     try:
         command = '''aws s3api list-objects --bucket %s --max-items %s''' % (bucket_name, args.num_keys)
         output = get_cmd_output(command)
@@ -124,7 +127,7 @@ def run_bucket_auth(bucket_name):
             output_json = ast.literal_eval(output.strip().replace('""', '"'))
             #Write the bucket content to file (in case you want to look back later)
             if output_json['Contents']:
-                add_string_to_file(file_name="%s/%s.json" % (bucket_dir, bucket_name), string_to_add=output_json['Contents'])
+                add_string_to_file(file_name="%s/%s.%s.json" % (bucket_dir, bucket_name, args.endpoint), string_to_add=output_json['Contents'])
             for item in output_json['Contents']:
                 key = item['Key']
                 #Skip keys that are folder names
@@ -132,18 +135,18 @@ def run_bucket_auth(bucket_name):
                     continue
                 check_key(bucket_name=bucket_name, key=key, file_size_mb=int(item['Size']/1024/1024))
         #Mark as done... 
-        checked_buckets.append(bucket_name)
-        add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add=bucket_name)
+        buckets_checked.append("%s.%s" % (bucket_name, args.endpoint))
+        add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         return bucket_name
     except:
-        add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add=bucket_name)
+        add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
 
 def check_key(bucket_name, key, file_size_mb):
     try:
         key_lower = key.lower()
-        msg = "{file_size_mb} -> {bucket_name}.s3.amazonaws.com/{key}".format(file_size_mb=file_size_mb, bucket_name=bucket_name, key=key)
+        msg = "{file_size_mb} -> {bucket_name}.{endpoint}/{key}".format(file_size_mb=file_size_mb, bucket_name=bucket_name, endpoint=args.endpoint, key=key)
         #Suspicious database/backup file
         if suspicious_backup(key_lower) and file_size_mb >= min_db_mb:
             logger.log.critical("\n%s"%  (msg))

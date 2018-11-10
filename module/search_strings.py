@@ -5,6 +5,7 @@ import random, time
 from lib.constants import *
 from lib.arg_parser import *
 from lib.logger import *
+from lib.file_actions import *
 from lib.progressbar import *
 from module.run_bucket import run_bucket
 from module.generate_strings import add_prefix_postfix
@@ -22,6 +23,8 @@ def string_gen_all(chars, num_chars):
 
 
 def search_strings():
+    global buckets_checked
+
     #String generation check
     if args.all_chars:
         string_generator = string_gen_all(chars=args.characters, num_chars=args.num_chars)
@@ -45,7 +48,7 @@ def search_strings():
         if len(active_processes) < pool_size:
             try:
                 next_bucket = string_generator.__next__()
-                if next_bucket in checked_buckets and not args.rerun:
+                if next_bucket in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
                     continue                    
                 active_processes.append(pool.apply_async(run_bucket, (next_bucket, )))
@@ -55,7 +58,7 @@ def search_strings():
                 if args.prefix_postfix:
                     names_with_prefix_postfix = add_prefix_postfix(next_bucket)
                     for name_with_prefix_postfix in names_with_prefix_postfix:
-                        if name_with_prefix_postfix in checked_buckets and not args.rerun:
+                        if name_with_prefix_postfix in buckets_checked and not args.rerun:
                             progress.num_skipped += 1
                             continue    
                         active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
@@ -64,6 +67,8 @@ def search_strings():
                         #Check running processes and remove them when done
                         for active_process in active_processes:
                             if active_process.ready():
+                                buckets_checked.append("%s.%s" % (active_process._value, args.endpoint))
+                                add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                                
                                 active_processes.remove(active_process)
                                 progress(num_completed=1, item=active_process._value)
                         progress(num_completed=0)
@@ -73,8 +78,11 @@ def search_strings():
         #Check running processes and remove them when done
         for active_process in active_processes:
             if active_process.ready():
+                buckets_checked.append("%s.%s" % (active_process._value, args.endpoint))
+                add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))
                 active_processes.remove(active_process)
                 progress(num_completed=1, item=active_process._value)
+
 
         if not active_processes and not next_bucket:
             break
