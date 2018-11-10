@@ -54,14 +54,14 @@ if __name__ == "__main__":
                 names_with_prefix_postfix = add_prefix_postfix(bucket_to_check)
                 for name_with_prefix_postfix in names_with_prefix_postfix:
                     #Skip here so you don't have to hit the multiprocess delay
-                    if name_with_prefix_postfix in buckets_checked and not args.rerun:
+                    if "%s.%s" % (name_with_prefix_postfix, args.endpoint) in buckets_checked and not args.rerun:
                         progress.num_skipped += 1
                         continue
                     progress.num_items += 1
                     active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
             else:
                 #Skip here so you don't have to hit the multiprocess delay
-                if name_with_prefix_postfix in buckets_checked and not args.rerun:
+                if "%s.%s" % (bucket_to_check, args.endpoint) in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
                     continue                
                 active_processes.append(pool.apply_async(run_bucket, (bucket_to_check, )))
