@@ -17,11 +17,11 @@ def run_bucket(bucket_name):
     #If you're just testing, print the bucket name and return
     if args.test:
         logger.log.critical("\n%s" % (bucket_name))
-        return
+        return bucket_name
     elif args.unauthenticated:
-        run_bucket_unauth(bucket_name)
+        return run_bucket_unauth(bucket_name)
     else:
-        run_bucket_auth(bucket_name)
+        return run_bucket_auth(bucket_name)
             
 
 def run_bucket_unauth(bucket_name):
@@ -37,24 +37,24 @@ def run_bucket_unauth(bucket_name):
         #See if the bucket doesn't exist
         for no_bucket_response in ["NoSuchBucket", "InvalidBucketName"]:
             if "<Code>{message}</Code>".format(message=no_bucket_response) in r.text:
-                return
+                return bucket_name
 
         #See if bucket is disabled
         if "<Code>AllAccessDisabled</Code>" in r.text:
             add_string_to_file("%s/buckets-allaccessdisabled.txt" % (list_dir), string_to_add=bucket_name)
-            return
+            return bucket_name
 
         #See if access is denied
         if "<Code>AccessDenied</Code>" in r.text:
             add_string_to_file("%s/buckets-accessdenied.txt" % (list_dir), string_to_add=bucket_name)
-            return
+            return bucket_name
 
         #Bucket exists...add it
         add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add=bucket_name)
 
         #If it has no keys, stop
         if not "<Key>" in r.text:
-            return
+            return bucket_name
         #Parse out the keys and look through them
         else:
             #Open XML
@@ -94,6 +94,7 @@ def run_bucket_unauth(bucket_name):
             #Close XML and write it
             key_dump += '''</ListBucketResult>'''
             add_string_to_file(file_name="%s/%s.xml" % (bucket_dir, bucket_name), string_to_add=key_dump)
+            return bucket_name
     except:
         add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add=bucket_name)
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
@@ -133,7 +134,7 @@ def run_bucket_auth(bucket_name):
         #Mark as done... 
         checked_buckets.append(bucket_name)
         add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add=bucket_name)
-
+        return bucket_name
     except:
         add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add=bucket_name)
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))

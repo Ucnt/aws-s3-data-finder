@@ -65,7 +65,7 @@ def search_strings():
                         for active_process in active_processes:
                             if active_process.ready():
                                 active_processes.remove(active_process)
-                                progress(num_completed=1)
+                                progress(num_completed=1, item=active_process._value)
                         progress(num_completed=0)
             except StopIteration:
                 next_bucket = ""
@@ -74,7 +74,7 @@ def search_strings():
         for active_process in active_processes:
             if active_process.ready():
                 active_processes.remove(active_process)
-                progress(num_completed=1)
+                progress(num_completed=1, item=active_process._value)
 
         if not active_processes and not next_bucket:
             break

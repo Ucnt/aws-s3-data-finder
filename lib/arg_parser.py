@@ -42,6 +42,8 @@ parser.add_argument('-sa', '--start_after', default='', help='For all_chars, sta
 parser.add_argument('--rerun', action='store_true', help="Rerun previously searched buckets")
 #Test mode just to see the bucket names
 parser.add_argument('-t', '--test', action='store_true', help="Test mode to just print the bucket names being run")
+#Print Bucket names as you go
+parser.add_argument('-p', '--print_names', action='store_true', help="Print buket names as you go")
 
 ###############################################
 ## Debug Options
