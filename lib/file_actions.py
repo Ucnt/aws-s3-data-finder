@@ -32,7 +32,7 @@ def add_string_to_file(file_name, string_to_add):
         logger.log.critical("Error adding %s to %s: %s" % (string_to_add, file_name, get_exception().replace("\n", " ")))
 
 
-def list_from_lines(file_name):
+def list_from_lines(file_name, to_lower=False):
     """Returns an array of items, where each item is a line in the file"""
     try:
         items = []
@@ -40,7 +40,10 @@ def list_from_lines(file_name):
             #Be sure you're not adding any empty lines...might mess something up if you're checking the array.
             for line in f:
                 if line.strip():
-                    items.append(line.strip())
+                    if to_lower:
+                        items.append(line.strip().lower())
+                    else:
+                        items.append(line.strip())
         return items
     except:
         logger.log.critical("Error getting list from %s - %s" % (file_name, get_exception().replace("\n", " ")))

@@ -48,8 +48,10 @@ def search_strings():
         if len(active_processes) < pool_size:
             try:
                 next_bucket = string_generator.__next__()
-                if "%s.%s" % (next_bucket, args.endpoint) in buckets_checked and not args.rerun:
+                next_bucket_with_endpoint = "%s.%s" % (next_bucket, args.endpoint)
+                if next_bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
+                    progress(num_completed=0, item=next_bucket)
                     continue                    
                 active_processes.append(pool.apply_async(run_bucket, (next_bucket, )))
                 progress.num_items += 1
@@ -58,8 +60,10 @@ def search_strings():
                 if args.prefix_postfix:
                     names_with_prefix_postfix = add_prefix_postfix(next_bucket)
                     for name_with_prefix_postfix in names_with_prefix_postfix:
+                        name_with_prefix_postfix = name_with_prefix_postfix.lower()
                         if "%s.%s" % (name_with_prefix_postfix, args.endpoint) in buckets_checked and not args.rerun:
                             progress.num_skipped += 1
+                            progress(num_completed=0, item=name_with_prefix_postfix)
                             continue    
                         active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
                         progress.num_items += 1
@@ -67,18 +71,17 @@ def search_strings():
                         #Check running processes and remove them when done
                         for active_process in active_processes:
                             if active_process.ready():
-                                buckets_checked.append("%s.%s" % (active_process._value, args.endpoint))
+                                buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
                                 add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                                
                                 active_processes.remove(active_process)
                                 progress(num_completed=1, item=active_process._value)
-                        progress(num_completed=0)
             except StopIteration:
                 next_bucket = ""
 
         #Check running processes and remove them when done
         for active_process in active_processes:
             if active_process.ready():
-                buckets_checked.append("%s.%s" % (active_process._value, args.endpoint))
+                buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
                 add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))
                 active_processes.remove(active_process)
                 progress(num_completed=1, item=active_process._value)
@@ -87,7 +90,6 @@ def search_strings():
         if not active_processes and not next_bucket:
             break
         else:
-            progress(num_completed=0)
             time.sleep(.05)
 
     #DONE!

@@ -15,6 +15,7 @@ min_db_mb = 50
 
 def run_bucket(bucket_name):
     #If you're just testing, print the bucket name and return
+    bucket_name = bucket_name.lower()
     if args.test:
         logger.log.critical("\n%s" % (bucket_name))
         return bucket_name
@@ -95,12 +96,13 @@ def run_bucket_unauth(bucket_name):
             #Close XML and write it
             key_dump += '''</ListBucketResult>'''
             add_string_to_file(file_name="%s/%s.%s.xml" % (bucket_dir, bucket_name, args.endpoint), string_to_add=key_dump)
-            buckets_checked.append("%s.%s" % (bucket_name, args.endpoint))
+            buckets_checked.append("%s.%s" % (bucket_name.lower(), args.endpoint))
             add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
-            return bucket_name
+        return bucket_name
     except:
         add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
+        return bucket_name
 
 
 def run_bucket_auth(bucket_name):
@@ -135,7 +137,7 @@ def run_bucket_auth(bucket_name):
                     continue
                 check_key(bucket_name=bucket_name, key=key, file_size_mb=int(item['Size']/1024/1024))
         #Mark as done... 
-        buckets_checked.append("%s.%s" % (bucket_name, args.endpoint))
+        buckets_checked.append("%s.%s" % (bucket_name.lower(), args.endpoint))
         add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         return bucket_name
     except:

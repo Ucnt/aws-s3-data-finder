@@ -54,15 +54,19 @@ if __name__ == "__main__":
                 names_with_prefix_postfix = add_prefix_postfix(bucket_to_check)
                 for name_with_prefix_postfix in names_with_prefix_postfix:
                     #Skip here so you don't have to hit the multiprocess delay
-                    if "%s.%s" % (name_with_prefix_postfix, args.endpoint) in buckets_checked and not args.rerun:
+                    bucket_with_endpoint = "%s.%s" % (name_with_prefix_postfix, args.endpoint)
+                    if bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
                         progress.num_skipped += 1
+                        progress(num_completed=0, item=name_with_prefix_postfix)
                         continue
                     progress.num_items += 1
                     active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
             else:
                 #Skip here so you don't have to hit the multiprocess delay
-                if "%s.%s" % (bucket_to_check, args.endpoint) in buckets_checked and not args.rerun:
+                bucket_with_endpoint = "%s.%s" % (bucket_to_check, args.endpoint)
+                if bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
+                    progress(num_completed=0, item=bucket_to_check)
                     continue                
                 active_processes.append(pool.apply_async(run_bucket, (bucket_to_check, )))
                 progress.num_items += 1
@@ -70,12 +74,11 @@ if __name__ == "__main__":
             #Keep track of progress...
             for active_process in active_processes:
                 if active_process.ready():
-                    buckets_checked.append("%s.%s" % (active_process._value, args.endpoint))
+                    buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
                     add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                      
                     active_processes.remove(active_process)
                     progress(num_completed=1, item=active_process._value)
 
-            progress(num_completed=0)
 
     #Keep checkig on progress until you're
     while True:

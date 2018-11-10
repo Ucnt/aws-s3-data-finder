@@ -14,7 +14,7 @@ class ProgressBar(object):
         """Initialized the ProgressBar object"""
         #Output format and variables
         self.symbol = "#"               #Needs to be 1 char
-        self.fmt = '''%(percent)3d%% %(progress_bar)s %(cur_item)s of %(num_items)s   %(items_per_time)s%(per_time_label)s    Skipped: %(num_skipped)s   Run Time: %(run_time)s   Item: %(item)s'''
+        self.fmt = '''%(percent)3d%% %(progress_bar)s %(cur_item)s of %(num_items)s   %(items_per_time)s%(per_time_label)s    Skipped: %(num_skipped)s   Run Time: %(run_time)s   Item: %(item)s%(end_spaces)s'''
         assert len(self.symbol) == 1    #If higher, progress bar won't populate properly
         try:
             self.progressbar_width = math.floor(int(os.popen('stty size', 'r').read().split()[1])*.35)

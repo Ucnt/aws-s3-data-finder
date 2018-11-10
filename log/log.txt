@@ -1,2 +1,5 @@
 logfile
 2018-11-03 13:18:46,895 | CRITICAL | Running with args: Namespace(all_chars=False, bucket_name='', characters='abcde', name_list='', num_chars=3, num_keys=200000, prefix_postfix=False, print_verbose=False, print_very_verbose=False, random_chars=False, rerun=False, start_after='', test=True)
+2018-11-10 08:51:47,389 | CRITICAL | Running with args: Namespace(all_chars=False, bucket_name='fwep', characters='', endpoint='s3.dualstack.us-gov-west-1.amazonaws.com', name_list='', num_chars=None, num_keys=200000, prefix_postfix='', print_names=False, print_verbose=False, print_very_verbose=False, random_chars=False, rerun=False, start_after='', test=False, unauthenticated=True)
+2018-11-10 08:51:49,129 | CRITICAL | 
+0.0006818771362304688 -> fwep.s3.dualstack.us-gov-west-1.amazonaws.com/int1/apps/easws/DockerFile-5.2
