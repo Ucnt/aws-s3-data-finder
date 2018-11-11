@@ -1,4 +1,1 @@
 bucketname
-aac
-acc
-fwep.s3.dualstack.us-gov-west-1.amazonaws.com
