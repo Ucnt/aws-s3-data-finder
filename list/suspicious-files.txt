@@ -1,2 +1,1 @@
 size -> file_path
-0.0006818771362304688 -> fwep.s3.dualstack.us-gov-west-1.amazonaws.com/int1/apps/easws/DockerFile-5.2
