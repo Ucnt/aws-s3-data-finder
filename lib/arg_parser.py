@@ -44,6 +44,7 @@ parser.add_argument('--rerun', action='store_true', help="Rerun previously searc
 parser.add_argument('-t', '--test', action='store_true', help="Test mode to just print the bucket names being run")
 #Print Bucket names as you go
 parser.add_argument('-p', '--print_names', action='store_true', help="Print buket names as you go")
+parser.add_argument('--no_follow_redirect', action='store_true', help="Don't follow redirects")
 
 ###############################################
 ## Debug Options

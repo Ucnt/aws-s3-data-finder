@@ -36,6 +36,15 @@ def run_bucket_unauth(bucket_name):
         r = requests.get(url, verify=False)
         add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
+        #Optional follow redirect (sometimes don't want to if you know it'll go somehwere you already checked)
+        if "<Code>PermanentRedirect</Code>" in r.text:
+            if args.no_follow_redirect:
+                return bucket_name
+            else:
+                endpoint_redirect = re.findall("<Endpoint>(.+?)</Endpoint>", r.text)[0]
+                url = "https://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
+                r = requests.get(url, verify=False)  
+
         #See if the bucket doesn't exist
         for no_bucket_response in ["NoSuchBucket", "InvalidBucketName"]:
             if "<Code>{message}</Code>".format(message=no_bucket_response) in r.text:
