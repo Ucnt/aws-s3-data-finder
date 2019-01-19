@@ -57,6 +57,7 @@ python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix OPTION] --test
 ## Run Unauth requests via a different endpoint (defaulted to "s3.amazonaws.com")
 
 python3 find_data.py -n bucketname -u -e "s3.us-east-2.amazonaws.com"
+** IF YOU DO THIS, EITHER RUN IT UNAUTHENTICATED OR CHANGE YOUR AWSCLI DEFAULT ENDPOINT!!
 
 
 # Notes
