@@ -36,6 +36,10 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 
 python3 find_data.py -n bucketname -u
 
+## Run a single bucket UNAUTHENTICATED but DO NOT follow redirects (by default, it will)
+
+python3 find_data.py -n bucketname -u --no_follow_redirect
+
 ## Bruteforce single name (bucket name or company name)
 
 python3 find_data.py --bucket_name mybucket [-pp|--prefix_postfix OPTION]
