@@ -153,6 +153,7 @@ def run_bucket_auth(bucket_name):
     except:
         add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
+        return bucket_name
 
 
 def check_key(bucket_name, key, file_size_mb):

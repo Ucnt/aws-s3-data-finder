@@ -71,8 +71,11 @@ def search_strings():
                         #Check running processes and remove them when done
                         for active_process in active_processes:
                             if active_process.ready():
-                                buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
-                                add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                                
+                                try:
+                                    buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
+                                    add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                                
+                                except:
+                                    pass
                                 active_processes.remove(active_process)
                                 progress(num_completed=1, item=active_process._value)
             except StopIteration:
