@@ -32,19 +32,25 @@ def run_bucket_unauth(bucket_name):
     '''
     global buckets_checked
     try:
-        endpoint = args.endpoint
-        url = "https://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=endpoint)
-        r = requests.get(url, verify=False)
-        add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, endpoint))
+        try:
+            url = "http://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
+            r = requests.get(url, timeout=5)
+        except:
+            url = "https://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
+            r = requests.get(url, verify=False, timeout=5)
+        add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
         if "<Code>PermanentRedirect</Code>" in r.text:
             if args.no_follow_redirect:
                 return bucket_name
             else:
                 endpoint_redirect = re.findall("<Endpoint>(.+?)</Endpoint>", r.text)[0]
-                url = "https://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
-                endpoint = endpoint_redirect.replace("%s." % (bucket_name), "")
-                r = requests.get(url, verify=False)                
+                try:
+                    url = "http://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
+                    r = requests.get(url, timeout=5)
+                except:
+                    url = "https://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
+                    r = requests.get(url, verify=False, timeout=5)
 
         #See if the bucket doesn't exist
         for no_bucket_response in ["NoSuchBucket", "InvalidBucketName"]:
@@ -53,16 +59,16 @@ def run_bucket_unauth(bucket_name):
 
         #See if bucket is disabled
         if "<Code>AllAccessDisabled</Code>" in r.text:
-            add_string_to_file("%s/buckets-allaccessdisabled.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, endpoint))
+            add_string_to_file("%s/buckets-allaccessdisabled.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             return bucket_name
 
         #See if access is denied
         if "<Code>AccessDenied</Code>" in r.text:
-            add_string_to_file("%s/buckets-accessdenied.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, endpoint))
+            add_string_to_file("%s/buckets-accessdenied.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             return bucket_name
 
         #Bucket exists...add it
-        add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, endpoint))
+        add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
         #If it has no keys, stop
         if not "<Key>" in r.text:
@@ -105,9 +111,9 @@ def run_bucket_unauth(bucket_name):
 
             #Close XML and write it
             key_dump += '''</ListBucketResult>'''
-            add_string_to_file(file_name="%s/%s.%s.xml" % (bucket_dir, bucket_name, endpoint), string_to_add=key_dump)
-            buckets_checked.append("%s.%s" % (bucket_name.lower(), endpoint))
-            add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, endpoint))
+            add_string_to_file(file_name="%s/%s.%s.xml" % (bucket_dir, bucket_name, args.endpoint), string_to_add=key_dump)
+            buckets_checked.append("%s.%s" % (bucket_name.lower(), args.endpoint))
+            add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
         return bucket_name
     except:
         add_string_to_file("%s/buckets-errors.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
@@ -135,7 +141,7 @@ def run_bucket_auth(bucket_name):
         elif "AllAccessDisabled" in output:
             pass
         else:
-            add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add=bucket_name)
+            add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             output_json = ast.literal_eval(output.strip().replace('""', '"'))
             #Write the bucket content to file (in case you want to look back later)
             if output_json['Contents']:
@@ -197,3 +203,4 @@ def suspicious_backup(key):
 
     #Not a suspicious DB backup
     return False
+
