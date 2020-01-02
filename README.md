@@ -67,6 +67,7 @@ python3 find_data.py -n bucketname -u -e "s3.us-east-2.amazonaws.com"
 
 # Notes
 - By default, bucket names already run will be skipped.  They can be re-run via "--rerun"
+- By default, files already alerted on will not be alerted again.  You can get re-alerted by adding "--realert"
 - Prior repo allowed a range of chars (e.g. 3-4 chars) to be run.  I will add this soon.
 - By default, the first 200k keys will be looked at.  This can be modified via "--num_keys"
 - Some buckets will error out.  list/bucket-errors.txt will list these buckets.  Often it will be JSON parsing issues.
