@@ -169,27 +169,27 @@ def check_key(bucket_name, key, file_size_mb):
     try:
         key_lower = key.lower()
         msg = "{file_size_mb} -> {bucket_name}.{endpoint}/{key}".format(file_size_mb=file_size_mb, bucket_name=bucket_name, endpoint=args.endpoint, key=key)
-
-        if msg.lower() in suspicious_files_found and not args.realert:
-            return
+        suspicious = False     # By default, not suspicous
 
         #Suspicious database/backup file
         if suspicious_backup(key_lower) and file_size_mb >= min_db_mb:
-            logger.log.critical("\n%s"%  (msg))
-            add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
+            suspicious = True
         #Potential docker releated files
         elif any([True for s in ["dockerfile", "docker-compose", "docker-container"] if s in key_lower]):
-            logger.log.critical("\n%s"%  (msg))
-            add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)        
+            suspicious = True
         #Potential credentials
         elif any([True for s in ["password", "creds", "credential"] if s in key_lower]):
             if any([True for extension in ["doc", "xls", "csv", "txt", "json"] if extension in key_lower]):
-                logger.log.critical("\n%s"%  (msg))
-                add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
+                suspicious = True
         #Bash or AWS files
         elif any([True for s in [".bash", ".aws"] if s in key_lower]):
+            suspicious = True
+
+        # Log as suspicious if not already done
+        if suspicious and args.realert and msg.lower() in suspicious_files_found:
             logger.log.critical("\n%s"%  (msg))
             add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
+
     except:
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
