@@ -52,9 +52,11 @@ def search_strings():
                 if next_bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
                     progress(num_completed=0, item=next_bucket)
-                    continue                    
-                active_processes.append(pool.apply_async(run_bucket, (next_bucket, )))
-                progress.num_items += 1
+                    if not args.prefix_postfix:
+                        continue
+                else:
+                    active_processes.append(pool.apply_async(run_bucket, (next_bucket, )))
+                    progress.num_items += 1
 
                 #Add names with prefix/Postfix
                 if args.prefix_postfix:
@@ -78,6 +80,7 @@ def search_strings():
                                     pass
                                 active_processes.remove(active_process)
                                 progress(num_completed=1, item=active_process._value)
+
             except StopIteration:
                 next_bucket = ""
 
@@ -98,4 +101,5 @@ def search_strings():
     #DONE!
     progress.done()
     logger.log.critical("DONE!")
+
 
