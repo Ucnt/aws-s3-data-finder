@@ -12,3 +12,4 @@ bucket_dir = "%s/bucket" % (main_dir)
 
 #Get list of buckets completed and create a generator to randomly look at new ones
 buckets_checked = list_from_lines("%s/buckets-checked.txt" % (list_dir), to_lower=True)
+suspicious_files_found = list_from_lines("%s/suspicious-files.txt" % (list_dir), to_lower=True)

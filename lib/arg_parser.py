@@ -40,6 +40,8 @@ parser.add_argument('-sa', '--start_after', default='', help='For all_chars, sta
 ###############################################
 #Rerun previously run buckets
 parser.add_argument('--rerun', action='store_true', help="Rerun previously searched buckets")
+#Rerun previously run buckets
+parser.add_argument('--realert', action='store_true', help="Realert previously alerted suspicious files")
 #Test mode just to see the bucket names
 parser.add_argument('-t', '--test', action='store_true', help="Test mode to just print the bucket names being run")
 #Print Bucket names as you go

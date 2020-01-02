@@ -33,10 +33,10 @@ def run_bucket_unauth(bucket_name):
     global buckets_checked
     try:
         try:
-            url = "http://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
+            url = "https://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
             r = requests.get(url, timeout=5)
         except:
-            url = "https://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
+            url = "http://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
             r = requests.get(url, verify=False, timeout=5)
         add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
@@ -46,10 +46,10 @@ def run_bucket_unauth(bucket_name):
             else:
                 endpoint_redirect = re.findall("<Endpoint>(.+?)</Endpoint>", r.text)[0]
                 try:
-                    url = "http://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
+                    url = "https://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
                     r = requests.get(url, timeout=5)
                 except:
-                    url = "https://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
+                    url = "http://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
                     r = requests.get(url, verify=False, timeout=5)
 
         #See if the bucket doesn't exist
@@ -69,6 +69,8 @@ def run_bucket_unauth(bucket_name):
 
         #Bucket exists...add it
         add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
+        if args.endpoint:
+            logger.log.critical("\nFound: %s\n" % (url))
 
         #If it has no keys, stop
         if not "<Key>" in r.text:
@@ -163,9 +165,14 @@ def run_bucket_auth(bucket_name):
 
 
 def check_key(bucket_name, key, file_size_mb):
+    global suspicious_files_found
     try:
         key_lower = key.lower()
         msg = "{file_size_mb} -> {bucket_name}.{endpoint}/{key}".format(file_size_mb=file_size_mb, bucket_name=bucket_name, endpoint=args.endpoint, key=key)
+
+        if msg.lower() in suspicious_files_found:
+            return
+
         #Suspicious database/backup file
         if suspicious_backup(key_lower) and file_size_mb >= min_db_mb:
             logger.log.critical("\n%s"%  (msg))
@@ -203,4 +210,3 @@ def suspicious_backup(key):
 
     #Not a suspicious DB backup
     return False
-
