@@ -170,7 +170,7 @@ def check_key(bucket_name, key, file_size_mb):
         key_lower = key.lower()
         msg = "{file_size_mb} -> {bucket_name}.{endpoint}/{key}".format(file_size_mb=file_size_mb, bucket_name=bucket_name, endpoint=args.endpoint, key=key)
 
-        if msg.lower() in suspicious_files_found:
+        if msg.lower() in suspicious_files_found and not args.realert:
             return
 
         #Suspicious database/backup file
