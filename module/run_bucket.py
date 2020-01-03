@@ -186,7 +186,9 @@ def check_key(bucket_name, key, file_size_mb):
             suspicious = True
 
         # Log as suspicious if not already done
-        if suspicious and args.realert and msg.lower() in suspicious_files_found:
+        if suspicious:
+            if msg.lower() in suspicious_files_found and not args.realert:
+                return
             logger.log.critical("\n%s"%  (msg))
             add_string_to_file("%s/suspicious-files.txt" % (list_dir), string_to_add=msg)
 
