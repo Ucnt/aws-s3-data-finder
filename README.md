@@ -2,7 +2,7 @@
 Find suspicious files (e.g. data backups, PII, credentials) across a large set of AWS S3 buckets and write the first 200k keys (by default) of listable buckets to a .json or .xml file (in buckets/) via awscli OR unauthenticated via HTTP requests.
 
 # Reason
-Companies and individuals, far too often, have public S3 buckets with client data or PII in them.  Details of my adventures are here: https://www.mattsvensson.com/nerdings/2017/7/27/amazon-s3-bucket-searching-and-scraping
+Companies and individuals, far too often, have public S3 buckets with client data or PII in them.
 
 # Background
 I had a repo (aws-s3-bruteforce) that was ugly, Python2 code and would only identify buckets whose files you could list.  Instead, I wanted to look through those lists, at scale, and speficially look for potential data exposure.
