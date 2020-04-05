@@ -44,8 +44,8 @@ def search_strings():
 
     #If you want to also run string generation, do it...otherwise just track results
     while True:
-        #If able, add another process
-        if len(active_processes) < pool_size:
+        #If able, add another process (keep plenty in the mix so it's not slow)
+        if len(active_processes) < pool_size*10:
             try:
                 next_bucket = string_generator.__next__()
                 next_bucket_with_endpoint = "%s.%s" % (next_bucket, args.endpoint)
@@ -75,12 +75,11 @@ def search_strings():
                             if active_process.ready():
                                 try:
                                     buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
-                                    add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                                
+                                    add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                           
                                 except:
                                     pass
                                 active_processes.remove(active_process)
                                 progress(num_completed=1, item=active_process._value)
-
             except StopIteration:
                 next_bucket = ""
 
@@ -95,8 +94,6 @@ def search_strings():
 
         if not active_processes and not next_bucket:
             break
-        else:
-            time.sleep(.05)
 
     #DONE!
     progress.done()
