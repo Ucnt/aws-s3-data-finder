@@ -11,7 +11,7 @@ from lib.logger import *
 from lib.file_actions import *
 from lib.get_cmd_output import *
 from lib.traceback import *
-min_db_mb = 50
+min_db_mb = 500
 
 def run_bucket(bucket_name):
     #If you're just testing, print the bucket name and return
@@ -139,15 +139,17 @@ def run_bucket_auth(bucket_name):
         elif "NoSuchBucket" in output:
             pass
         elif "Access Denied" in output:
-            pass
+            add_string_to_file("%s/buckets-accessdenied.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
+            return bucket_name
         elif "AllAccessDisabled" in output:
-            pass
+            add_string_to_file("%s/buckets-allaccessdisabled.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
+            return bucket_name
         else:
             add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
             output_json = ast.literal_eval(output.strip().replace('""', '"'))
             #Write the bucket content to file (in case you want to look back later)
-            if output_json['Contents']:
-                add_string_to_file(file_name="%s/%s.%s.json" % (bucket_dir, bucket_name, args.endpoint), string_to_add=output_json['Contents'])
+            #if output_json['Contents']:
+                #add_string_to_file(file_name="%s/%s.%s.json" % (bucket_dir, bucket_name, args.endpoint), string_to_add=output_json['Contents'])
             for item in output_json['Contents']:
                 key = item['Key']
                 #Skip keys that are folder names
@@ -196,19 +198,23 @@ def check_key(bucket_name, key, file_size_mb):
         logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
 
-def suspicious_backup(key):
+def suspicious_backup(key_lower):
     #Any database file
-    if any([True for extension in [".sql", ".mysql", ".mongodb", ".mariadb", ".mdb", ".dump"] if extension in key]):
+    if any([True for extension in [".sql", ".mysql", ".mongodb", ".mariadb", ".mdb", ".dump"] if extension in key_lower]):
+        return True
+
+    # Virtual drive backup
+    if any([True for extension in [".vmdk", ".vbox", ".vhd", ".vdi", ".hdd"] if extension in key_lower]):
         return True
 
     #Compressed file
-    if any([True for extension in [".gz", ".tar", ".zip", ".7z"] if extension in key]):
-        #Backup
-        if any([True for s in ["docker", "backup", "bak", "archive"] if s in key]):
-            return True
-        #Possible user data
-        if any([True for s in ["user", "member", "client"] if s in key]):
-            return True
+    if any([True for extension in [".gz", ".tar", ".zip", ".7z"] if extension in key_lower]):
+        return True
+
+    #Email backup
+    if any([True for extension in [".pst", ] if extension in key_lower]):
+        return True
 
     #Not a suspicious DB backup
     return False
+
