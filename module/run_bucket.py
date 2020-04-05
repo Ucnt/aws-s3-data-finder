@@ -69,8 +69,6 @@ def run_bucket_unauth(bucket_name):
 
         #Bucket exists...add it
         add_string_to_file("%s/buckets-found.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
-        if args.endpoint:
-            logger.log.critical("\nFound: %s\n" % (url))
 
         #If it has no keys, stop
         if not "<Key>" in r.text:
