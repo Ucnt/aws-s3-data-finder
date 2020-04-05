@@ -20,17 +20,25 @@ def add_prefix_postfix(bucket_name):
     add_with_no_entity(bucket_names)
     add_with_space_replacements(bucket_names)
 
+    separator_in_name = ""
+    for bucket in bucket_names:
+        for prefix_postfix_separator in prefix_postfix_separators:
+            if (prefix_postfix_separator in bucket and prefix_postfix_separator != ""):
+                separator_in_name = prefix_postfix_separator
+                break
+
     names_with_additions = []
     for bucket in bucket_names:
         for prefix_postfix_separator in prefix_postfix_separators:
-            #Only add teh separator if it's in the bucket or none are in the bucket
-            if (prefix_postfix_separator in bucket and prefix_postfix_separator != "") or \
-                not any(True for item in prefix_postfix_separators if item in bucket and item not in [prefix_postfix_separator, ""]):
-                    for prefix_postfix in prefixes_postfixes:
-                        if args.prefix_postfix.lower() in ['both', 'prefix']:
-                            names_with_additions.append("{prefix_postfix}{prefix_postfix_separator}{bucket}".format(prefix_postfix=prefix_postfix, prefix_postfix_separator=prefix_postfix_separator, bucket=bucket))
-                        if args.prefix_postfix.lower() in ['both', 'postfix']:
-                            names_with_additions.append("{bucket}{prefix_postfix_separator}{prefix_postfix}".format(bucket=bucket, prefix_postfix_separator=prefix_postfix_separator, prefix_postfix=prefix_postfix))
+            #Only add teh separator if it's in the bucket name already or there aren't any separators
+            if (separator_in_name == prefix_postfix_separator or not separator_in_name):
+                for prefix_postfix in prefixes_postfixes:
+                    if "{separator}" in prefix_postfix.lower():
+                        prefix_postfix = prefix_postfix.replace("{separator}", prefix_postfix_separator)
+                    if args.prefix_postfix.lower() in ['both', 'prefix']:
+                        names_with_additions.append("{prefix_postfix}{prefix_postfix_separator}{bucket}".format(prefix_postfix=prefix_postfix, prefix_postfix_separator=prefix_postfix_separator, bucket=bucket))
+                    if args.prefix_postfix.lower() in ['both', 'postfix']:
+                        names_with_additions.append("{bucket}{prefix_postfix_separator}{prefix_postfix}".format(bucket=bucket, prefix_postfix_separator=prefix_postfix_separator, prefix_postfix=prefix_postfix))
 
     return list(set(names_with_additions))
 
