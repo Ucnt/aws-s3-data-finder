@@ -12,8 +12,25 @@ from module.generate_strings import add_prefix_postfix
 
 
 if __name__ == "__main__":
+    global buckets_checked
     logger.log.critical("Running with args: %s" % (args))
 
+    if len(buckets_checked) > 100000:
+        logger.log.critical('''
+******************************************************************************
+YOU HAVE {} checked buckets that you are going to look through to see if you re-run.
+THIS COULD HAVE A SIGNIFICANT impact on performance.
+**********************************************************************************
+'''.format(len(buckets_checked)))
+
+    if args.endpoint and not args.unauthenticated:
+        logger.log.critical('''
+********************************************************************************************
+************************************************************************************************
+Running on %s.  BE SURE AWS CLI IS CONFIGURED FOR IT!!
+************************************************************************************************
+************************************************************************************************
+''' % (args.endpoint))
 
     active_processes = []            #Store the processes until they are done
     pool_size = multiprocessing.cpu_count() * 2
@@ -44,10 +61,10 @@ if __name__ == "__main__":
 
     #Run a list of names
     elif args.name_list:
-        global buckets_checked
         buckets_to_check = list_from_lines(args.name_list)
 
         #Add given buckets to asynch pool
+        last_active_process = ""       
         for bucket_to_check in buckets_to_check:
             #Add names with prefix/Postfix
             if args.prefix_postfix:
@@ -57,17 +74,24 @@ if __name__ == "__main__":
                     bucket_with_endpoint = "%s.%s" % (name_with_prefix_postfix, args.endpoint)
                     if bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
                         progress.num_skipped += 1
-                        progress(num_completed=0, item=name_with_prefix_postfix)
                         continue
                     progress.num_items += 1
+                    progress(num_completed=0, item=last_active_process)
                     active_processes.append(pool.apply_async(run_bucket, (name_with_prefix_postfix, )))
+
+                    #Go through and check if any processes are done
+                    #for active_process in active_processes:
+                    #    if active_process.ready():
+                    #        active_processes.remove(active_process)
+                    #        last_active_process = active_process._value
+                    #        progress(num_completed=1, item=last_active_process)
             else:
                 #Skip here so you don't have to hit the multiprocess delay
                 bucket_with_endpoint = "%s.%s" % (bucket_to_check, args.endpoint)
                 if bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
                     progress.num_skipped += 1
-                    progress(num_completed=0, item=bucket_to_check)
-                    continue                
+                    progress(num_completed=0, item=last_active_process)
+                    continue
                 active_processes.append(pool.apply_async(run_bucket, (bucket_to_check, )))
                 progress.num_items += 1
 
@@ -77,7 +101,11 @@ if __name__ == "__main__":
                     buckets_checked.append("%s.%s" % (active_process._value.lower(), args.endpoint))
                     add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                      
                     active_processes.remove(active_process)
-                    progress(num_completed=1, item=active_process._value)
+                    last_active_process = active_process._value                   
+                    progress(num_completed=1, item=last_active_process)
+            #Be sure something shows if you're just skipping buckets
+            if not last_active_process:
+                progress(num_completed=0, item=bucket_to_check)
 
 
     #Keep checkig on progress until you're
@@ -85,6 +113,7 @@ if __name__ == "__main__":
         #Check running processes and remove them when done
         for active_process in active_processes:
             if active_process.ready():
+                add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (active_process._value, args.endpoint))                  
                 active_processes.remove(active_process)
                 progress(num_completed=1, item=active_process._value)
 
@@ -93,3 +122,4 @@ if __name__ == "__main__":
             break
 
         time.sleep(.05)
+
