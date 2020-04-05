@@ -49,7 +49,7 @@ def search_strings():
             try:
                 next_bucket = string_generator.__next__()
                 next_bucket_with_endpoint = "%s.%s" % (next_bucket, args.endpoint)
-                if next_bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
+                if not args.rerun and next_bucket_with_endpoint.lower() in buckets_checked:
                     progress.num_skipped += 1
                     progress(num_completed=0, item=next_bucket)
                     if not args.prefix_postfix:
@@ -63,7 +63,7 @@ def search_strings():
                     names_with_prefix_postfix = add_prefix_postfix(next_bucket)
                     for name_with_prefix_postfix in names_with_prefix_postfix:
                         name_with_prefix_postfix = name_with_prefix_postfix.lower()
-                        if "%s.%s" % (name_with_prefix_postfix, args.endpoint) in buckets_checked and not args.rerun:
+                        if not args.rerun and "%s.%s" % (name_with_prefix_postfix, args.endpoint) in buckets_checked:
                             progress.num_skipped += 1
                             progress(num_completed=0, item=name_with_prefix_postfix)
                             continue    
