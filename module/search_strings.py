@@ -45,7 +45,7 @@ def search_strings():
     #If you want to also run string generation, do it...otherwise just track results
     while True:
         #If able, add another process (keep plenty in the mix so it's not slow)
-        if len(active_processes) < pool_size*2:
+        if len(active_processes) < pool_size*5:
             try:
                 next_bucket = string_generator.__next__()
                 next_bucket_with_endpoint = "%s.%s" % (next_bucket, args.endpoint)
