@@ -29,7 +29,7 @@ Buckets found (both public and authenticated) will be written to list/buckets-fo
 - These are in module/prefixes_postfixes.py.  I have commented out a large number that were not useful to me.
 - If a ".", "-", or "_" is already in the name, only that char will be used (faster and best results)
 - The --prefix_postfix option can be: both, prefix, or postfix
-- You can add a "{separator}" to a bucket name e.g. "zoom{separator}meetings".  This will, as the script goes through separators (e.g. "-", "_", "."), that separator will be added in place if "{separator}".  This makes it less work to add variations of prefixes/postfixes with consistent character types.
+- You can add "{separator}" to a prefix/postfix in module/prefixes_postfixes.py e.g. "zoom{separator}meetings".  This will, as the script goes through separators (e.g. "-", "_", "."), that separator will be added in place if "{separator}".  This makes it less work to add variations of prefixes/postfixes with consistent character types.  In the script this will add "zoommeetings" "zoom-meetings" "zoom_meetings" and "zoom.meetings" as a prefix/postfix.
 
 # Example commands
 
