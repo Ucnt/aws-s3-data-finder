@@ -15,7 +15,7 @@ if __name__ == "__main__":
     global buckets_checked
     logger.log.critical("Running with args: %s" % (args))
 
-    if len(buckets_checked) > 100000:
+    if len(buckets_checked) > 1:
         logger.log.critical('''
 ******************************************************************************
 YOU HAVE {} checked buckets that you are going to look through to see if you re-run.
@@ -72,7 +72,7 @@ Running on %s.  BE SURE AWS CLI IS CONFIGURED FOR IT!!
                 for name_with_prefix_postfix in names_with_prefix_postfix:
                     #Skip here so you don't have to hit the multiprocess delay
                     bucket_with_endpoint = "%s.%s" % (name_with_prefix_postfix, args.endpoint)
-                    if bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
+                    if not args.rerun and bucket_with_endpoint.lower() in buckets_checked:
                         progress.num_skipped += 1
                         continue
                     progress.num_items += 1
@@ -88,7 +88,7 @@ Running on %s.  BE SURE AWS CLI IS CONFIGURED FOR IT!!
             else:
                 #Skip here so you don't have to hit the multiprocess delay
                 bucket_with_endpoint = "%s.%s" % (bucket_to_check, args.endpoint)
-                if bucket_with_endpoint.lower() in buckets_checked and not args.rerun:
+                if not args.rerun and bucket_with_endpoint.lower() in buckets_checked:
                     progress.num_skipped += 1
                     progress(num_completed=0, item=last_active_process)
                     continue
