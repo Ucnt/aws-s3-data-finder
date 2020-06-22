@@ -21,6 +21,9 @@ class ProgressBar(object):
         except:
             self.progressbar_width = 40                 #Length of progress bar
         
+        # Add end spaes to stop ghost characters.  Keep in the call in case screen size changes
+        self.end_spaces = " " * 5
+
         #Vars related to counts/time
         self.start_epoch = int(time.time())         #Assumes you create the object just as you start the first item
         self.finished = False
@@ -76,12 +79,8 @@ class ProgressBar(object):
             'per_time_label': per_time_label,
             'run_time': self.get_eta(run_time, get_ms=True),
             'item': item,
-            'end_spaces' : "",
+            'end_spaces' : self.end_spaces,
         }
-
-        #Add end spaes to stop ghost characters.  Keep in the call in case screen size changes
-        num_end_spaces = int(os.popen('stty size', 'r').read().split()[1]) - len(self.fmt%args) - 1 
-        args['end_spaces'] = " " * num_end_spaces
 
         #Print the update
         print(self.fmt%args, end="\r", flush=True)
