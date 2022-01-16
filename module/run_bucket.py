@@ -37,7 +37,7 @@ def run_bucket_unauth(bucket_name):
             r = requests.get(url, timeout=5)
         except:
             url = "http://{bucket_name}.{endpoint}".format(bucket_name=bucket_name, endpoint=args.endpoint)
-            r = requests.get(url, verify=False, timeout=5)
+            r = requests.get(url, timeout=5)
         add_string_to_file("%s/buckets-checked.txt" % (list_dir), string_to_add="%s.%s" % (bucket_name, args.endpoint))
 
         if "<Code>PermanentRedirect</Code>" in r.text:
@@ -50,7 +50,7 @@ def run_bucket_unauth(bucket_name):
                     r = requests.get(url, timeout=5)
                 except:
                     url = "http://{endpoint_redirect}".format(endpoint_redirect=endpoint_redirect)
-                    r = requests.get(url, verify=False, timeout=5)
+                    r = requests.get(url, timeout=5)
 
         #See if the bucket doesn't exist
         for no_bucket_response in ["NoSuchBucket", "InvalidBucketName"]:
@@ -105,7 +105,7 @@ def run_bucket_unauth(bucket_name):
                 try:
                     if "<IsTruncated>true</IsTruncated>" in r.text:
                         next_rul = '''{url}?list-type=2&start-after={last_key}'''.format(url=url, last_key=re.findall("<Key>(.+?)</Key>", r.text)[-1])
-                        r = requests.get(next_rul, verify=False)
+                        r = requests.get(next_rul)
                 except:
                     logger.log.warning("\nError on %s: %s" % (bucket_name, get_exception().replace("\n","")))
 
